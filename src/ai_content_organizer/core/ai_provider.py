@@ -2,14 +2,12 @@ from __future__ import annotations
 
 import json
 import logging
-import os
-from pathlib import Path
 from typing import Any
 
 import google.generativeai as genai
-from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
+from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_exponential
 
-from ai_content_organizer.models.schemas import AppConfig, SummaryMode
+from ai_content_organizer.models.schemas import AppConfig
 
 logger = logging.getLogger(__name__)
 

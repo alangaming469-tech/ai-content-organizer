@@ -1,20 +1,18 @@
 from __future__ import annotations
 
 import os
-from enum import Enum
-from pathlib import Path
-from typing import List, Optional
+from enum import StrEnum
 
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 
-class SummaryMode(str, Enum):
+class SummaryMode(StrEnum):
     brief = "brief"
     detailed = "detailed"
     keypoints = "keypoints"
 
 
-class SupportedFormat(str, Enum):
+class SupportedFormat(StrEnum):
     pdf = "pdf"
     txt = "txt"
     md = "md"
@@ -32,7 +30,7 @@ class AppConfig(BaseModel):
     api_key: str = Field(..., validation_alias="GOOGLE_API_KEY")
     model_name: str = Field(default="gemini-2.5-flash")
     default_mode: SummaryMode = Field(default=SummaryMode.brief)
-    supported_formats: List[SupportedFormat] = Field(
+    supported_formats: list[SupportedFormat] = Field(
         default_factory=lambda: [
             SupportedFormat.pdf,
             SupportedFormat.txt,
@@ -55,5 +53,5 @@ class AppConfig(BaseModel):
 class SummaryOutput(BaseModel):
     mode: str
     summary: str = Field(min_length=1)
-    key_points: Optional[List[str]] = Field(default=None)
+    key_points: list[str] | None = Field(default=None)
     metadata: dict = Field(default_factory=dict)

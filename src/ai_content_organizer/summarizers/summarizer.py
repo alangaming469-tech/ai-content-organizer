@@ -4,7 +4,7 @@ import json
 import logging
 import re
 from dataclasses import dataclass
-from typing import Any, Dict, Optional
+from typing import Any
 
 from ai_content_organizer.models.schemas import AppConfig, SummaryMode
 from ai_content_organizer.summarizers.ai_provider import AIProviderPort, build_provider
@@ -17,7 +17,7 @@ class SummarizeResult:
     mode: str
     summary: str
     key_points: list[str]
-    metadata: Dict[str, Any]
+    metadata: dict[str, Any]
 
     def model_dump_json(self, indent: int = 2) -> str:
         return json.dumps(self.__dict__, indent=indent, ensure_ascii=False)
@@ -78,7 +78,7 @@ def sanitize_input(content: str, max_chars: int) -> str:
     return content
 
 
-def validate_json_output(text: str, mode: str) -> Dict[str, Any]:
+def validate_json_output(text: str, mode: str) -> dict[str, Any]:
     """Parse and validate JSON output from model. Anti-hallucination guard."""
     try:
         data = json.loads(text)
@@ -122,19 +122,18 @@ def validate_json_output(text: str, mode: str) -> Dict[str, Any]:
 
 class HallucinationGuard:
     """Post-processing guard against hallucinated content."""
-    
+
     @staticmethod
     def check(summary: str, source_text: str) -> tuple[bool, list[str]]:
         """Verify summary claims exist in source. Returns (passed, issues)."""
         issues = []
         # Simple heuristic: numbers in summary must appear in source
-        import re
         nums_in_summary = set(re.findall(r"\b\d+(?:[.,]\d+)?\b", summary))
         nums_in_source = set(re.findall(r"\b\d+(?:[.,]\d+)?\b", source_text))
         for num in nums_in_summary:
             if num not in nums_in_source:
                 issues.append(f"Number '{num}' in summary not found in source")
-        
+
         # Check for common hallucination markers
         hallucination_markers = [
             r"as an ai language model",
@@ -145,13 +144,13 @@ class HallucinationGuard:
         for marker in hallucination_markers:
             if re.search(marker, summary, re.IGNORECASE):
                 issues.append(f"Hallucination marker detected: {marker}")
-        
+
         passed = len(issues) == 0
         return passed, issues
 
 
 class SummarizerService:
-    def __init__(self, config: Optional[AppConfig] = None):
+    def __init__(self, config: AppConfig | None = None):
         self.config = config or AppConfig.from_env()
         self.provider: AIProviderPort = build_provider(
             "gemini",
@@ -164,7 +163,7 @@ class SummarizerService:
         self,
         content: str,
         mode: SummaryMode = SummaryMode.brief,
-        model: Optional[str] = None,
+        model: str | None = None,
     ) -> SummarizeResult:
         logger.info("Summarization started | mode=%s | chars=%d", mode.value, len(content))
 

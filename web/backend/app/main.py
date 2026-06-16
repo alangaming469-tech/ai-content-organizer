@@ -1,12 +1,12 @@
 from __future__ import annotations
 
-from typing import Any, Dict
+from typing import Any
 
+from ai_content_organizer.src.core.ai_provider import GeminiProvider
+from ai_content_organizer.src.models.schemas import AppConfig
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from ai_content_organizer.src.models.schemas import AppConfig
-from ai_content_organizer.src.core.ai_provider import GeminiProvider
 from app.config import settings
 
 
@@ -15,7 +15,7 @@ class AIService:
         self.config = AppConfig.from_env()
         self.provider = GeminiProvider(self.config)
 
-    def analyze(self, text: str, query: str) -> Dict[str, Any]:
+    def analyze(self, text: str, query: str) -> dict[str, Any]:
         if not text:
             raise ValueError("text is required")
         if not query:
@@ -48,8 +48,8 @@ app.add_middleware(
 )
 
 
-@app.post("/api/v1/summarize", response_model=Dict[str, Any])
-def summarize(payload: Dict[str, str]) -> Dict[str, Any]:
+@app.post("/api/v1/summarize", response_model=dict[str, Any])
+def summarize(payload: dict[str, str]) -> dict[str, Any]:
     text = payload.get("text")
     query = payload.get("query")
     service = AIService()
@@ -58,5 +58,5 @@ def summarize(payload: Dict[str, str]) -> Dict[str, Any]:
 
 # Minimal health check route to verify connectivity.
 @app.get("/health")
-def health() -> Dict[str, str]:
+def health() -> dict[str, str]:
     return {"status": "ok"}

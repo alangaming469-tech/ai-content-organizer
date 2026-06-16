@@ -1,10 +1,9 @@
 from __future__ import annotations
 
-import os
-from typing import Any, Dict
+from typing import Any
 
-from ai_content_organizer.src.models.schemas import AppConfig
 from ai_content_organizer.src.core.ai_provider import GeminiProvider
+from ai_content_organizer.src.models.schemas import AppConfig
 
 
 class AIService:
@@ -12,7 +11,7 @@ class AIService:
         self.config = AppConfig.from_env()
         self.provider = GeminiProvider(self.config)
 
-    def analyze(self, text: str, query: str) -> Dict[str, Any]:
+    def analyze(self, text: str, query: str) -> dict[str, Any]:
         if not text:
             raise ValueError("text is required")
         if not query:

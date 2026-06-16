@@ -1,14 +1,13 @@
-import io
-import json
 import logging
 import textwrap
 from pathlib import Path
-from typing import Optional
 
 import streamlit as st
-from streamlit.runtime.scriptrunner import get_script_run_ctx
 
-
+# ─── Local imports ───────────────────────────────────────────────────
+from ai_content_organizer.models.schemas import AppConfig, SummaryMode
+from ai_content_organizer.parsers.file_parsers import build_parser
+from ai_content_organizer.summarizers.summarizer import SummarizerService
 
 # ─── Page configuration ──────────────────────────────────────────────
 st.set_page_config(
@@ -25,12 +24,6 @@ logging.basicConfig(
     datefmt="%Y-%m-%d %H:%M:%S",
 )
 logger = logging.getLogger("dashboard")
-
-# ─── Local imports ───────────────────────────────────────────────────
-from ai_content_organizer.models.schemas import AppConfig, SummaryMode
-from ai_content_organizer.parsers.file_parsers import build_parser
-from ai_content_organizer.summarizers.summarizer import SummarizerService
-
 
 # ─── Constants / UI copy ─────────────────────────────────────────────
 SIDEBAR_TITLE = "⚙️ Configuration"
@@ -78,7 +71,7 @@ def sidebar_config_form() -> AppConfig:
             max_value=8_192,
             value=2_048,
             step=256,
-            help="Cap the model’s response length.",
+            help="Cap the model's response length.",
         )
         temperature = st.slider(
             "Temperature",
@@ -171,8 +164,8 @@ def render_header() -> None:
     st.caption("v0.1.0 • Open Source • MIT License")
 
 
-def render_input_section(config: AppConfig) -> tuple[Optional[str], bool]:
-    """Render file uploader + text area. Returns (text, submitted)."""
+def render_input_section(config: AppConfig) -> tuple[str | None, st.runtime.uploaded_file_manager.UploadedFile | None, bool]:
+    """Render file uploader + text area. Returns (text, uploaded, submitted)."""
     with st.container(border=True):
         st.subheader("📥 Input")
         col1, col2 = st.columns([1, 3])
@@ -295,11 +288,11 @@ def render_usage_guide() -> None:
                 ai-content-organizer --input report.pdf --output summary.json --mode brief
 
                 # Detailed mode with custom model
-                ai-content-organizer \\\\
-                  --input transcript.txt \\\\
-                  --output out.json \\\\
-                  --mode detailed \\\\
-                  --model gemini-1.5-pro \\\\
+                ai-content-organizer \\
+                  --input transcript.txt \\
+                  --output out.json \\
+                  --mode detailed \\
+                  --model gemini-1.5-pro \\
                   --verbose
                 ```
 

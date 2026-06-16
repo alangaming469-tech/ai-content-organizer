@@ -6,7 +6,6 @@ from typing import Protocol
 
 from ai_content_organizer.models.schemas import SupportedFormat
 
-
 logger = logging.getLogger(__name__)
 
 
