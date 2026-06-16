@@ -32,7 +32,9 @@ jobs:
         run: ruff check .
 
       - name: Type check with pyright
-        run: pyright src/
+        run: |
+          pip install --upgrade pyright==1.1.380
+          pyright --pythonversion 3.11 src/
 
       - name: Run unit tests
         run: pytest tests/unit -v --tb=short
