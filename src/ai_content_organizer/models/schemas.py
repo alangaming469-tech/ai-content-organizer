@@ -1,18 +1,18 @@
 from __future__ import annotations
 
 import os
-from enum import StrEnum
+from enum import Enum
 
 from pydantic import BaseModel, ConfigDict, Field
 
 
-class SummaryMode(StrEnum):
+class SummaryMode(str, Enum):
     brief = "brief"
     detailed = "detailed"
     keypoints = "keypoints"
 
 
-class SupportedFormat(StrEnum):
+class SupportedFormat(str, Enum):
     pdf = "pdf"
     txt = "txt"
     md = "md"

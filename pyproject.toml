@@ -56,7 +56,7 @@ addopts = "-v --tb=short"
 line-length = 120
 target-version = "py311"
 select = ["E", "F", "I", "UP", "W"]
-ignore = ["E501"]
+ignore = ["E501", "UP042"]
 
 [tool.pyright]
 pythonVersion = "3.11"
